@@ -121,6 +121,32 @@ is a true *single sign-on* protocol!
   06/04/2018 21:45:50  06/05/2018 21:38:24  host/client.ipademo.local@IPADEMO.LOCAL
   06/04/2018 21:38:41  06/05/2018 21:38:24  krbtgt/IPADEMO.LOCAL@IPADEMO.LOCAL
 
+Create another user
+--------------------------
+Create the user ``alice`` using the same procedure that was used to
+create ``bob``.
+
+
+Add User to sysadmin group
+--------------------------
+Create the sysadmin group and add alice as a member.
+::
+   [client]$ ipa group-add sysadmin
+   ----------------------
+   Added group "sysadmin"
+   ----------------------
+    Group name: sysadmin
+    Description: System Administrators
+    GID: 229400003
+   [client]$ ipa group-add-member sysadmin --users='alice'
+    Group name: sysadmin
+    Description: System Administrators
+    GID: 229400003
+    Member users: bob
+   -------------------------
+   Number of members added 1
+   -------------------------
+   [client]$ 
 
 Now that you have created some users, it's time to define some
 access policies.  Proceed to

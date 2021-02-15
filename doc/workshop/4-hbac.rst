@@ -31,34 +31,6 @@ commands—one to create the host group, then another to add
 ``client.ipademo.local`` to the host group.
 
 
-Disabling the ``allow_all`` HBAC rule
--------------------------------------
-
-HBAC rules are managed via the ``hbacrule`` plugin.  You can
-complete the following actions via the Web UI as well, but we will
-cover the CLI commands.
-
-List the existing HBAC rules::
-
-  [server]$ ipa hbacrule-find
-  -------------------
-  1 HBAC rule matched
-  -------------------
-    Rule name: allow_all
-    User category: all
-    Host category: all
-    Service category: all
-    Description: Allow all users to access any host from any host
-    Enabled: TRUE
-  ----------------------------
-  Number of entries returned 1
-  ----------------------------
-
-The FreeIPA server is installed with a single default ``allow_all``
-rule.  This rule must be disabled for other HBAC rules to take
-effect.  Look for a command that can do this, and run it.
-
-
 Creating HBAC rules
 -------------------
 
@@ -103,6 +75,34 @@ the rule.  The following transcript details the process::
 The ``--servicecat=all`` option applies this rule for all services on
 matching hosts.  It could have been set during the ``hbacrule-add``
 command instead.
+
+
+Disabling the ``allow_all`` HBAC rule
+-------------------------------------
+
+HBAC rules are managed via the ``hbacrule`` plugin.  You can
+complete the following actions via the Web UI as well, but we will
+cover the CLI commands.
+
+List the existing HBAC rules::
+
+  [server]$ ipa hbacrule-find
+  -------------------
+  1 HBAC rule matched
+  -------------------
+    Rule name: allow_all
+    User category: all
+    Host category: all
+    Service category: all
+    Description: Allow all users to access any host from any host
+    Enabled: TRUE
+  ----------------------------
+  Number of entries returned 1
+  ----------------------------
+
+The FreeIPA server is installed with a single default ``allow_all``
+rule.  This rule must be disabled for other HBAC rules to take
+effect.  Look for a command that can do this, and run it.
 
 
 Testing HBAC rules

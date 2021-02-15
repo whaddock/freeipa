@@ -84,9 +84,11 @@ Requirements
 
 For the FreeIPA workshop you will need to:
 
-- Install **Vagrant** and **VirtualBox**. (On Fedora, you can use **libvirt**
-  instead of VirtualBox).
+- Run this workshop on Fedora with 64-bit hardware. We have only
+  tested this on Fedora 32.
 
+- Install **Vagrant** and **libvirt**.
+  
 - Use Git to clone the repository containing the ``Vagrantfile``
 
 - Fetch the Vagrant *box* for the workshop
@@ -98,10 +100,10 @@ Please set up these items **prior to the workshop**.  More detailed
 instructions follow.
 
 
-Install Vagrant and VirtualBox
+Install Vagrant
 ------------------------------
 
-Fedora
+Fedora 32
 ^^^^^^
 
 If you intend to use the ``libvirt`` provider (recommended), install
@@ -110,7 +112,7 @@ If you intend to use the ``libvirt`` provider (recommended), install
   $ sudo dnf install -y vagrant-libvirt vagrant-libvirt-doc
 
 Also ensure you have the latest versions of ``selinux-policy`` and
-``selinux-policy-targeted``.
+``selinux-policy-targeted``. (Just run sudo dnf update).
 
 Allow your regular user ID to start and stop Vagrant boxes using ``libvirt``.
 Add your user to ``libvirt`` group so you don't need to enter your administrator
@@ -119,117 +121,58 @@ password everytime::
   $ sudo gpasswd -a ${USER} libvirt
   $ newgrp libvirt
 
-On **Fedoda 28** you need to enable ``virtlogd``::
-
-  $ systemctl enable --now virtlogd.socket
-
 Finally restart the services::
 
-  $ systemctl restart libvirtd
-  $ systemctl restart polkit
+  $ sudo systemctl restart libvirtd
+  $ sudo systemctl restart polkit
 
-Otherwise, you will use VirtualBox and the ``virtualbox`` provider.
-VirtualBox needs to build kernel modules, and that means that you must
-first install kernel headers and Dynamic Kernel Module Support::
+Note: The newgrp and two restart commands will need to be run whenever
+you logout and log back in again to your terminal session. You can
+see what happens if you run id before and after the newgrp command
+is run.
 
-  $ sudo dnf install -y vagrant kernel-devel dkms
-
-Next, install VirtualBox from the official VirtualBox package repository.
-Before using the repo, check that its contents match what appears
-in the transcript below (to make sure it wasn't tampered with)::
-
-  $ sudo curl -o /etc/yum.repos.d/virtualbox.repo \
-    http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
-
-  $ cat /etc/yum.repos.d/virtualbox.repo
-  [virtualbox]
-  name=Fedora $releasever - $basearch - VirtualBox
-  baseurl=http://download.virtualbox.org/virtualbox/rpm/fedora/$releasever/$basearch
-  enabled=1
-  gpgcheck=1
-  repo_gpgcheck=1
-  gpgkey=https://www.virtualbox.org/download/oracle_vbox.asc
-
-  $ sudo dnf install -y VirtualBox-5.2
-
-Finally, load the kernel modules (you may need to restart your system for this to work)::
-
-  $ sudo modprobe vboxdrv vboxnetadp
-
-
-Mac OS X
-^^^^^^^^
-
-Install Vagrant for Mac OS X from
-https://www.vagrantup.com/downloads.html.
-
-Install VirtualBox 5.2 for **OS X hosts** from
-https://www.virtualbox.org/wiki/Downloads.
-
-Install Git from https://git-scm.com/download/mac or via your
-preferred package manager.
-
-
-Debian / Ubuntu
-^^^^^^^^^^^^^^^
-
-Install Vagrant and Git::
-
-  $ sudo apt-get install -y vagrant git
-
-**Virtualbox 5.2** may be available from the system package manager,
-depending your your release.  Find out which version of VirtualBox is
-available::
-
-  $ apt list virtualbox
-  Listing... done
-  virtualbox/bionic 5.2.10-dfsg-6 amd64
-
-If version 5.2 is available, install it via ``apt-get``::
-
-  $ sudo apt-get install -y virtualbox
-
-If VirtualBox 5.2 was not available in the official packages for
-your release, follow the instructions at
-https://www.virtualbox.org/wiki/Linux_Downloads to install it.
-
-
-Windows
-^^^^^^^
-
-Install Vagrant via the ``.msi`` available from
-https://www.vagrantup.com/downloads.html.
-
-Install VirtualBox 5.2 for **Windows hosts** from
-https://www.virtualbox.org/wiki/Downloads.
-
-You will also need to install an SSH client, and Git.  Git for
-Windows also comes with an SSH client so just install Git from
-https://git-scm.com/download/win.
-
-
-Clone this repository
+Clone the freeipa repository
 ---------------------
 
 This repository contains the ``Vagrantfile`` that is used for the
-workshop, which you will need locally.
+workshop, which you will need locally. You'll find it in the
+doc/workshop folder.
 
 ::
 
-  $ git clone https://github.com/freeipa/freeipa-workshop.git
+  $ git clone https://github.com/freeipa/freeipa.git
 
 
 Fetch Vagrant box
 -----------------
 
-Please fetch the Vagrant box prior to the workshop.  It is > 600MB
-so it may not be feasible to download it during the workshop.
+Fetch the Vagrant box.  It is > 600MB. It may take a while depending
+on your internet connection speed.
 
 ::
 
   $ vagrant box add netoarmando/freeipa-workshop
 
 
+Edit the Vagrant file to increase memory
+----------------------
+Use your favorite editor to change the memory from 1024 to 2048.
+::
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.qemu_use_session = false
+    libvirt.memory = 2048   <------------- Change from 1024
+   
+If you do not have enough RAM in your host computer, you can bring
+up the virtual machines individually. The two IPA servers need to
+have 2048 MB of memory but you do not need to run the replica
+except during the lesson 7 on IPA Replica installation. Just bring
+up the server first and let it stay up. then bring up the client
+when you start the client lessons. You can stop the client and then
+bring up the replica for lesson 7, then shut it down for the
+remainder of the lessons. All lessions but lesson 7 just need
+to have the server and client up. Lesson 1 only needs to have
+the server up.
+  
 Add hosts file entries
 ----------------------
 
@@ -245,9 +188,6 @@ Add the following entries to your hosts file::
 
 On Unix systems (including Mac OS X), the hosts file is ``/etc/hosts``
 (you need elevated permissions to edit it.)
-
-On Windows, edit ``C:\Windows\System32\system\drivers\etc\hosts`` as
-*Administrator*.
 
 
 Next step
